@@ -1,125 +1,77 @@
-busCapacity = 47
-totalPassengerInBus = 0
-happyCustomer = 0
-unhappyCustomer = 0
-ratio = 0
-routeNumber = 0
-noOfStops = 0
+import os
+
+count = 0;
+fileLength = 0;
+strippedLine = 0;
+
+errorMessage = "Error reading data. \n Please ensure each line of routes.txt contains a route  number, followed by a comma, \n followed by a happy ratio  \n and that no route  is repeated throughout the file"
+routeArray = []
+disc = []
+
+
+def sort_route_data():
+    print("shorting")
+
+# function that reads the routing text
+def read_route_data(fileName):
+    if os.path.getsize(fileName) == 0:
+        raise Exception(errorMessage)
+
+    with open(fileName, 'r') as file:
+        content = file.readlines()
+
+        # stores the line length from a file
+        fileLength = content.__len__()
+
+        for line in content:
+            # returns a copy of the string
+            strippedLine = line.strip()
+            if strippedLine == "":
+                raise Exception(errorMessage);
+            # splits the text
+            routeArray = strippedLine.split(",")
+
+            try:
+                # stores a route number and  the ratio number of happy and unhappy numbers
+
+                busRoute = {'route_number': float(routeArray[0]), "happy_ratio ": float(routeArray[1])}
+                disc.append(busRoute)
+
+                print(float(routeArray[0]))
+            except ValueError:
+                raise Exception(errorMessage)
+    file.close()
+
 
 while True:
+    try:
+        addBus = input("How many routes can have an extra bus? ")
+        n = int(addBus);
+        if n < 0:
+            print("Invalid value. Please enter a non-negative integer")
+        else:
+            read_route_data("routes.txt")
+            break
+    except ValueError:
+        raise Exception(errorMessage)
+
+# show error message
+if n < fileLength:
+    raise Exception(errorMessage)
+else:
+
     routeNumber = input("Enter the route number :")
     try:
         routeNumber = int(routeNumber);
-        if routeNumber > 0:
-            break;
-        else:
-            raise Exception("number should be greater than 0")
+        for route in disc:
+            if route['route_number'] != n:
+                raise Exception("This route is not available")
+            else:
+                print("route available")
+                break
+
     except ValueError:
         print("Please enter a valid number")
 
-while True:
-    noOfStops = input("Please enter the number of stops on this route :")
-    try:
-        noOfStops = int(noOfStops);
-        if noOfStops > 0:
-            break;
-        else:
-            raise Exception("Stop should be greater than 0")
-    except ValueError:
-        print("Please enter a valid number")
 
-print('-------------------------------------------------------------------------------------------')
 
-i = 0
-while i < noOfStops:
-
-    if i == 0:
-
-        while True:
-            totalNumber = input(' How many passengers were waiting for the bus at stop #' + str(i + 1) + " : ")
-            try:
-                totalNumber = int(totalNumber);
-
-                if totalNumber < 0:
-                    raise Exception("Should be positive integer")
-
-                if totalNumber > 47:
-                    totalPassengerInBus = busCapacity
-                    unhappyCustomer = totalNumber - busCapacity
-                    happyCustomer = busCapacity
-                else:
-                    happyCustomer = totalNumber
-                    totalPassengerInBus = totalNumber
-
-                i = i + 1
-                break
-            except:
-                print("Enter a valid number")
-
-    if i == noOfStops - 1:
-
-        while True:
-            response = input("How many passengers left the bus at stop # " + str(i + 1) + " : ");
-            try:
-                response = int(response)
-                if response < 0:
-                    raise Exception("Number should be greater than 0")
-                if response > 47:
-                    raise Exception("CANNOT HAVE MORE THAN BUS CAPACITY ")
-                if response <= totalPassengerInBus:
-                    raise Exception("All the passenger" + totalPassengerInBus + "should leave bus in last stop")
-
-                totalPassengerInBus = 0
-                i = i + 1
-                break
-            except:
-                print("Enter a valid number")
-    else:
-        while True:
-            try:
-                response = input("How many passengers are leaving the bus at stop #" + str(i + 1))
-                response = int(response)
-                if response < 0:
-                    raise Exception("Should be a positive integer")
-                if response > busCapacity:
-                    raise Exception("Bus Capacity should be lesser")
-                if response > totalPassengerInBus:
-                    raise Exception("There cannot more people leaving then they are inside the bus")
-
-                totalPassengerInBus = totalPassengerInBus - response
-                break;
-            except:
-                print("Enter a valid number")
-
-        while True:
-            try:
-                response = input("How many passengers are joining the bus at stop #" + str(i + 1))
-                response = int(response)
-                if response > 0:
-                    raise Exception("Should be a positive integer")
-                if response > busCapacity:
-                    raise Exception("Bus Capacity should be lesser")
-                if (response + totalPassengerInBus) > busCapacity:
-                    unhappyCustomer += response + totalPassengerInBus - busCapacity
-                    happyCustomer += busCapacity - totalPassengerInBus
-                    totalPassengerInBus = totalPassengerInBus - response
-                else:
-                    happyCustomer += response
-                    totalPassengerInBus += response
-                break
-            except:
-                print("Enter a valid number")
-        i = i + 1
-
-    print('------------------------------------------------------------------------------------')
-    print('                                  RESULT                                             ')
-    print('-------------------------------------------------------------------------------------')
-    print("route number                                    :    " + str(routeNumber))
-    print("Happy customer                                  :    " + str(happyCustomer))
-    print("Unhappy customer                                :    " + str(unhappyCustomer))
-    print("Ratio                                            :      " + str(happyCustomer / unhappyCustomer))
-    # print("Total no of passenger                           : " + str(totalPassengerInBus))
-    # print("Total no of passenger who drop in last route    : " + str(totalPassengerInBus - passengerDrop))
-    #
-    # print("total no of stops                               : " + str(noOfStops))
-    print('-------------------------------------------------------------------------------------')
